@@ -14,7 +14,7 @@ const LoginPage = (props) => {
   const [ age, setAge ] = useState(null);
   const [ gender, setGender ] = useState(null);
   const [ country, setCountry ] = useState(null);
-  let history = useHistory();
+  const history = useHistory();
 
   function handleClick() {
 
@@ -29,10 +29,7 @@ const LoginPage = (props) => {
 
   return (
     <div style={{
-        backgroundImage: `url(${Background})`,
         height: '100%',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center'
     }}>
       <StyleLoginPage>
         <Stylebox>
@@ -82,7 +79,6 @@ const mapDispatchToProps = {
   addUserLocally: addUser
 };
 const mapStateToProps = state => {
-  console.log('Login state', state);
   return {
     state
   }

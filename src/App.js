@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
@@ -6,28 +6,33 @@ import {
   Redirect,
 } from 'react-router-dom';
 
-import VideoChat from './screens/VideoChat';
-import LoginPage from './screens/Login';
-import PrivateRoute from './components/PrivateRoute';
-import ErrorBoundary from './components/ErrorBoundary';
 import './App.css';
+
+const VideoChat = lazy(() => import('./screens/VideoChat'));
+const LoginPage = lazy(() => import('./screens/Login'));
+const PrivateRoute = lazy(() => import('./components/PrivateRoute'));
+const ErrorBoundary = lazy(() => import('./components/ErrorBoundary'));
+
+const LoadingMessage = () => <p>Loading</p>;
 
 export default () => {
   return (
     <Router>
-      <ErrorBoundary>
-        <Switch>
-          <Route exact path="/">
-            <Redirect to="/login" />
-          </Route>
-          <Route path="/login">
-            <LoginPage />
-          </Route>
-          <PrivateRoute path="/chat">
-            <VideoChat />
-          </PrivateRoute>
-        </Switch>
-      </ErrorBoundary>
+      <Suspense fallback={<LoadingMessage />}>
+        <ErrorBoundary>
+          <Switch>
+            <Route exact path="/">
+              <Redirect to="/login" />
+            </Route>
+            <Route path="/login">
+              <LoginPage />
+            </Route>
+            <PrivateRoute path="/chat">
+              <VideoChat />
+            </PrivateRoute>
+          </Switch>
+        </ErrorBoundary>
+      </Suspense>
     </Router>
   );
 };
