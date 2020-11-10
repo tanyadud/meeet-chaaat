@@ -70,6 +70,9 @@ class VideoChat extends React.Component {
     return new Promise(resolve => {
       this.peer = new Peer(uuidv4(), peerConfig);
 
+
+      console.log('this.peer.id', this.peer.id);
+
       this.peer.on('open', () => resolve());
       this.peer.on('error', this.onPeerError);
       this.peer.on('call', this.onPeerCall);
