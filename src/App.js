@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { lazy, Suspense } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
@@ -6,13 +6,12 @@ import {
   Redirect,
 } from 'react-router-dom';
 
+import './App.css';
+
 import VideoChat from './screens/VideoChat';
 import LoginPage from './screens/Login';
 import PrivateRoute from './components/PrivateRoute';
 import ErrorBoundary from './components/ErrorBoundary';
-
-import './App.css';
-
 
 const LoadingMessage = () => <p>Loading</p>;
 
