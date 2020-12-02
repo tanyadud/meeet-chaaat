@@ -1,13 +1,90 @@
-body {
+@font-face {
+  font-family: 'OpenSans';
+  font-weight: 500;
+  src: url('./common/fonts/OpenSans-Regular.ttf') format('truetype')
+}
+
+@font-face {
+  font-family: 'OpenSans-Bold';
+  font-weight: 600;
+  src: url('./common/fonts/OpenSans-Bold.ttf') format('truetype')
+}
+
+@font-face {
+  font-family: 'OpenSans-Light';
+  font-weight: 300;
+  src: url('./common/fonts/OpenSans-Light.ttf') format('truetype')
+}
+
+* {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  padding: 0;
+  box-sizing: border-box;
+  text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-kerning: auto;
+}
+
+body {
+  margin: 0;
+  font-size: 16px;
+  font-family: 'OpenSans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+}
+
+html, body, button, input, textarea, p, span {
+  font-family: 'OpenSans', sans-serif;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+button {
+  border: none;
+  /*width: 100%;*/
+  cursor: pointer;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #36083A;
+  font-family: 'OpenSans', sans-serif;
+}
+h1 {
+  font-size: 35px;
+  margin: 20px 0 10px;
+}
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #E8DFEC;
+  width: 3px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #820665;
+  border-radius: 5px;
+}
+
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  border-radius: 5px;
+}
+
+button:disabled {
+  pointer-events: none;
 }

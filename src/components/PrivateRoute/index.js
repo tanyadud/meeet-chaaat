@@ -3,7 +3,6 @@ import { Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 const PrivateRoute = ({ children, user, ...rest }) => {
-  console.log('user', user);
   return (
     <Route
       {...rest}
@@ -24,7 +23,6 @@ const PrivateRoute = ({ children, user, ...rest }) => {
 };
 
 const mapStateToProps = (state) => {
-  console.log('private route', state);
   return {
     user: state.userReducer.user,
   };

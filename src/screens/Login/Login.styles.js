@@ -1,44 +1,61 @@
 import styled from "styled-components";
 
-export const StyleLoginPage = styled.div`
+export const Container = styled.div`
     display: flex;
-    height: 100%;
-    align-items: center;
     justify-content: center;
-    flex-direction: column;
-    background-image: url("../../common/images/speaking.jpg");
-  
-`
-export const ButtonNext = styled.button`
-    font-size: 20px;
-    margin-top: 20px;
-    padding: 11px 15px;
-    border: none; 
-    background: #212121;
-    color: #fff;
-    cursor: pointer;
-    width: 100%;
-    &:disabled {
-       background: rgba(0, 0, 0, .4);
-       cursor: default;
-       color: rgba(255, 255, 255, .7);
-    }
-`
-export const Stylebox = styled.div`k
-    text-align: center;
-    color: #3F3E41;
-    max-width: 288px;
-    background: #fff;
-    padding: 20px 30px 40px 30px;
-`
+    align-items: center;
+    height: 100%; 
+`;
 
-export const Select = styled.select `
+export const Button = styled.button`
     width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 0;
-    font-size: 16px;
+    display: block;
+    color: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    background: rgb(170,7,107);
+    background: linear-gradient(90deg, rgba(170,7,107,1) 0%, rgba(97,4,95,1) 100%);
+
+    transition: all .4s ease-in-out;
+    background-size: 200% 100%;
+    &:hover {
+      background-position: 100% 0;
+      transition: all .4s ease-in-out;
+    }
     &:disabled {
-       color: rgba(255, 255, 255, .7);
+        background: rgba(157, 148, 160, .5);
+    }
+`;
+
+export const Overlay = styled.div`
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     width: 100%;
+     height: 100%;
+     background: rgba(0, 0, 0, .6);
+`;
+
+export const LoginForm = styled.div`
+    display: flex;
+    height: 380px;
+    width: 300px;
+    justify-content: space-between;
+    flex-direction: column;
+    padding: 35px;
+    background: #fff;
+    border-top-right-radius: 35px;
+    border-top-left-radius: 35px;
+`;
+
+export const Slogan = styled.div`
+    display: flex;
+    align-items: center;
+    font-family: OpenSans, sans-serif;
+    font-size: 20p;
+    
+    img {
+      width: 40px;
+      margin-right: 10px;
     }
 `;

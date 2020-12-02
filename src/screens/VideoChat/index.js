@@ -4,38 +4,26 @@ import io from 'socket.io-client';
 import {v4 as uuidv4} from 'uuid';
 import {connect} from 'react-redux';
 import peerConfig from '../../peer.config';
+import UserImg from '../../common/images/user.png';
+import Background from '../../common/images/elements.png';
+import ChatControls from '../../components/ChatControls';
+import ChatInput from '../../components/ChatInput';
+import Message from '../../components/Message';
+import Modal from '../../components/Modal';
+import VideoControls from '../../components/VideoControls';
 
 import {
-  Button,
-  BoxButton,
-  LocalPlayer,
-  RemotePlayer,
-  CommonPlayer,
-  ChatBox,
   Container,
+  VideoContainer,
   ChatContainer,
-  PeersStat,
-  ChatMessagesContainer,
-  MyMessage,
-  ChatMessage,
-  NoMessagesTitle,
-  ChatInput,
-  ChatButton,
-  ChatInputContainer,
-  ModalErrorContainer,
-  ModalError,
-  CloseModal,
-  NotFound,
-  PeersCount,
-  PeersIcon,
-  Loader,
-  PlayerContainer,
-  MobileControls,
-  OpenChatIcon,
-  CloseChatIcon,
-  RoundButton,
-  MobileButtons,
-  DesktopButtons
+  UserPreview,
+  Video,
+  Chat,
+  NoMessages,
+  ChatOverlay,
+  CloseButton,
+  MessagesContainer,
+  VIDEO_STYLES
 } from './VideoChat.styles';
 
 class VideoChat extends React.Component {
@@ -69,9 +57,7 @@ class VideoChat extends React.Component {
   setPeerConnection = () => {
     return new Promise(resolve => {
       this.peer = new Peer(uuidv4(), peerConfig);
-
-
-      console.log('this.peer.id', this.peer.id);
+      console.log('[PEER] ID:', this.peer.id);
 
       this.peer.on('open', () => resolve());
       this.peer.on('error', this.onPeerError);
@@ -85,13 +71,14 @@ class VideoChat extends React.Component {
       query: {
         peerID: this.peer.id,
         peerInfo: JSON.stringify(this.props.user),
-      },
+      }
     });
 
     this.socket.on('get-stat', this.onSocketGetStat);
     this.socket.on('close-call', this.onSocketCallEnd);
     this.socket.on('message', this.onSocketGetMessage);
     this.socket.on('connect_error', this.onSocketConnError);
+    this.socket.on('connect_failed', this.onSocketConnError);
     this.socket.on('connection-success', this.onSocketConnect);
     this.socket.on('get-candidate', this.onSocketGetCandidate);
   };
@@ -150,6 +137,7 @@ class VideoChat extends React.Component {
   };
 
   onSocketGetCandidate = payload => {
+    console.log('[SOCKET]: onSocketGetCandidate', payload)
     this.setState({remotePeerID: payload.remotePeerID});
     this.callToPeer(payload.remotePeerID)
   };
@@ -165,9 +153,6 @@ class VideoChat extends React.Component {
       await this.setPeerConnection();
       this.setSocketConnection();
     }
-
-    console.log('findCandidate peer ==>', this.peer);
-    console.log('findCandidate socket ==>', this.socket);
 
     console.log('[DEBUG]: findCandidate. Peer ID:', this.peer.id);
     this.emitPeers('get-candidate', this.peer.id);
@@ -204,19 +189,13 @@ class VideoChat extends React.Component {
     }
   };
 
-  handleTextInput = e => {
+  handleTextInput = textValue => {
     this.setState({
-      textValue: e.target.value,
+      textValue
     });
   };
 
-  onKeyHandler = e => {
-    if(e.key === 'Enter'){
-      this.sendMessage()
-    }
-  };
-
-  sendMessage = e => {
+  sendMessage = () => {
     if (this.state.textValue.trim()) {
       this.setState({
         textValue: '',
@@ -251,164 +230,90 @@ class VideoChat extends React.Component {
     this.socket = null;
   };
 
-  toggleMobileChat = () => {
+  onModalClose = () => {
     this.setState({
-      showMobileChat: !this.state.showMobileChat
+      showError: false
+    })
+  };
+
+  toggleMobileChat = (value) => {
+    this.setState({
+      showMobileChat: value
     })
   };
 
   render() {
-    const chatElement = (
-      <>
-        <ChatMessagesContainer>
-          {!this.state.messages || !this.state.messages.length ? (
-            <NoMessagesTitle>There is no messages yet</NoMessagesTitle>
-          ) : (
-            this.state.messages.map((msg) =>
-              msg.id === this.peer.id ? (
-                <div key={uuidv4()} style={{textAlign: 'right'}}>
-                  <MyMessage>{msg.text}</MyMessage>
-                </div>
-              ) : (
-                <div key={uuidv4()}>
-                  <ChatMessage>{msg.text}</ChatMessage>
-                </div>
-              )
-            )
-          )}
-        </ChatMessagesContainer>
-
-        <ChatInputContainer onKeyPress={this.onKeyHandler}>
-          <ChatInput
-            disabled={!this.state.remotePeerID}
-            onChange={this.handleTextInput}
-            value={this.state.textValue}
-          />
-          <ChatButton
-            onClick={this.sendMessage}
-            disabled={
-              !this.state.textValue.trim() || !this.state.remotePeerID
-            }
-          >
-            <span className="material-icons">send</span>
-          </ChatButton>
-        </ChatInputContainer>
-      </>
-    );
-
-    const controlsElement = (
-      <>
-        {
-
-        }
-        <DesktopButtons>
-          <Button
-            onClick={this.findCandidate}
-            disabled={this.state.remotePeerID}
-          >
-            {/*<span className="material-icons">call</span>*/}
-            Start
-          </Button>
-          <Button
-            disabled={!this.state.remotePeerID}
-            onClick={this.destroyPeer}
-          >
-            {/*<span className="material-icons">call_end</span>*/}
-            Stop
-          </Button>
-        </DesktopButtons>
-
-        <MobileButtons>
-          <RoundButton
-            onClick={this.findCandidate}
-            disabled={this.state.remotePeerID}
-          >
-            <span className="material-icons">call</span>
-          </RoundButton>
-          <RoundButton
-            disabled={!this.state.remotePeerID}
-            onClick={this.destroyPeer}
-          >
-            <span className="material-icons">call_end</span>
-          </RoundButton>
-        </MobileButtons>
-
-
-        <PeersStat>
-          <PeersIcon className="material-icons">people</PeersIcon>
-          <PeersCount>{this.state.stat.count}</PeersCount>
-        </PeersStat>
-      </>
-    );
-
+    const { showError, cameraError, remotePeerID, stat, messages, textValue, showMobileChat, connError } = this.state;
     return (
-      <Container>
-        {this.state.showError && (
-          <ModalErrorContainer>
-            <ModalError>
-              <CloseModal
-                onClick={() => this.setState({showError: false})}
-                className="material-icons"
-              >
-                close
-              </CloseModal>
-              <p>Camera or microphone not found. Please try again.</p>
-            </ModalError>
-          </ModalErrorContainer>
-        )}
-        <CommonPlayer>
-          <PlayerContainer>
-            <RemotePlayer ref={this.remoteVideoRef} autoPlay/>
-            {this.state.progress && <Loader/>}
-          </PlayerContainer>
+      <Container style={{ backgroundImage: `url("${Background}")` }}>
 
-          <PlayerContainer>
-            {!this.state.cameraError ? (
-              <LocalPlayer ref={this.localVideoRef} autoPlay/>
+        <Modal
+          onClose={this.onModalClose}
+          isOpen={showError}
+        />
+
+        <VideoContainer>
+
+          {
+            cameraError ? (
+              <UserPreview>
+                <img style={{ width: '100%', maxWidth: 400 }} src={UserImg} alt=""/>
+              </UserPreview>
             ) : (
-              <NotFound>Camera or microphone not found</NotFound>
-            )}
-          </PlayerContainer>
+              <>
+                {remotePeerID && <Video ref={this.remoteVideoRef} autoPlay/>}
+                <Video ref={this.localVideoRef} autoPlay style={remotePeerID ? VIDEO_STYLES : null}/>
+              </>
+            )
+          }
+          <div style={{ position: 'absolute', bottom: 25, width: '100%' }}>
+            <VideoControls
+              onStopped={this.destroyPeer}
+              isDisabled={Boolean(!this.peer || !this.socket || cameraError || !remotePeerID)}
+              onChatOpen={() => this.toggleMobileChat(true)}
+            />
+          </div>
 
-        </CommonPlayer>
+        </VideoContainer>
+        <ChatContainer>
+          <div>
+            <ChatControls
+              isDisabled={Boolean(connError || cameraError || remotePeerID)}
+              stat={stat} onStart={this.findCandidate}/>
+          </div>
 
-        {
-          this.state.showMobileChat && (
-            <ChatContainer>
-              <CloseChatIcon onClick={this.toggleMobileChat} className="material-icons">close</CloseChatIcon>
-              {chatElement}
-            </ChatContainer>
-          )
-        }
+          {
+              <ChatOverlay isVisible={showMobileChat}>
+                <Chat>
+                  <CloseButton onClick={() => this.toggleMobileChat(false)}>
+                    <span className="material-icons">close</span>
+                  </CloseButton>
+                  <MessagesContainer>
 
-        {
-          !this.state.showMobileChat && (
-            <MobileControls>
-              <OpenChatIcon
-                onClick={this.toggleMobileChat}
-                disabled={
-                  this.state.cameraError ||
-                  this.state.connError ||
-                  !this.state.active
-                }>
-                <span className="material-icons">textsms</span>
-              </OpenChatIcon>
+                    {!messages || !messages.length ? (
+                      <NoMessages>There is no messages yet</NoMessages>
+                    ) : (
+                      messages.map((msg) =>
+                        <Message key={uuidv4()} value={msg.text} isOwner={msg.id === this.peer.id}/>
+                      )
+                    )}
+                  </MessagesContainer>
 
-              {controlsElement}
-            </MobileControls>
-          )
-        }
-
-
-        <ChatBox>
-          <BoxButton>
-            {controlsElement}
-          </BoxButton>
-
-          {chatElement}
-        </ChatBox>
+                  <div>
+                    <ChatInput
+                      isSendDisabled={Boolean(!this.state.textValue.trim())}
+                      isInputDisabled={Boolean(!this.state.remotePeerID)}
+                      onText={this.handleTextInput}
+                      onSend={this.sendMessage}
+                      value={textValue}
+                      placeholder="Write your message" />
+                  </div>
+                </Chat>
+              </ChatOverlay>
+          }
+        </ChatContainer>
       </Container>
-    );
+    )
   }
 }
 

@@ -15,7 +15,7 @@ const ErrorBoundary = lazy(() => import('./components/ErrorBoundary'));
 
 const LoadingMessage = () => <p>Loading</p>;
 
-export default () => {
+const App = () => {
   return (
     <Router>
       <Suspense fallback={<LoadingMessage />}>
@@ -36,3 +36,5 @@ export default () => {
     </Router>
   );
 };
+
+export default App;

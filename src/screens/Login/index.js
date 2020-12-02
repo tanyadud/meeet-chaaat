@@ -1,25 +1,24 @@
-import React, { useState } from 'react';
-import { connect } from 'react-redux';
-import { useHistory } from 'react-router-dom';
-import { addUser } from '../../actions';
-import { StyleLoginPage, Select, Stylebox, ButtonNext } from './Login.styles';
-
-import Background from '../../common/images/talking.jpg';
-import COUNTRIES_LIST from '../../common/data/countries';
-import GENDER_LIST from '../../common/data/genderList';
-const AGE_LIST = [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40];
+import React, {useState} from 'react';
+import {connect} from 'react-redux';
+import {useHistory} from 'react-router-dom';
+import {addUser} from '../../actions';
+import Dropdown from '../../components/Dropdown';
+import {Container, Overlay, LoginForm, Button, Slogan} from './Login.styles';
+import { COUNTRIES_LIST } from '../../common/data/countries';
+import { GENDER_LIST } from '../../common/data/genderList';
+import Logo from '../../common/icons/logo64_64.svg'
+import Background from '../../common/images/photos.png';
 
 
 const LoginPage = (props) => {
-  const [ age, setAge ] = useState(null);
-  const [ gender, setGender ] = useState(null);
-  const [ country, setCountry ] = useState(null);
+  const [gender, setGender] = useState('');
+  const [country, setCountry] = useState('');
+  const [showGenderDropdown, setShowGenderDropdown] = useState(false);
+  const [showCountriesDropdown, setShowCountriesDropdown] = useState(false);
   const history = useHistory();
 
-  function handleClick() {
-
+  function redirectToChat() {
     props.addUserLocally({
-      age,
       gender,
       country
     });
@@ -27,50 +26,73 @@ const LoginPage = (props) => {
     history.push("/chat");
   }
 
-  return (
-    <div style={{
-        height: '100%',
-    }}>
-      <StyleLoginPage>
-        <Stylebox>
-          <h1>Welcome</h1>
-          <Select onChange={(e) => setCountry(e.target.value)} defaultValue="">
-            <option disabled={true} value="">Choose country...</option>
-            {
-              COUNTRIES_LIST.map(e => (
-                <option key={e.name}>
-                  {e.name}
-                </option>
-              ))
-            }
-          </Select>
-          <Select onChange={(e) => setGender(e.target.value)} defaultValue="">
-            <option disabled={true} value="">Choose gender...</option>
-            {
-              GENDER_LIST.map(e => (
-                <option key={e.name}>
-                  {e.name}
-                </option>
-              ))
-            }
-          </Select>
-          <Select onChange={(e) => setAge(e.target.value)} defaultValue="">
-            <option disabled={true} value="">Choose age...</option>
-            {
-              AGE_LIST.map(age => (
-                <option key={age}>
-                  { age }
-                </option>
-              ))
-            }
-          </Select>
-          <ButtonNext disabled={!age || !gender|| !country} onClick={handleClick}>
-            Next
-          </ButtonNext>
-        </Stylebox>
+  const onClickAway = () => {
+    setShowGenderDropdown(false);
+    setShowCountriesDropdown(false);
+  };
 
-      </StyleLoginPage>
-    </div>
+  const onCountriesSelectHandler = (val) => {
+    setCountry(val);
+    setShowCountriesDropdown(false);
+  };
+
+  const onGenderSelectHandler = (val) => {
+    setGender(val);
+    setShowGenderDropdown(false);
+  };
+
+  const onCountriesListTrigger = () => {
+    setShowCountriesDropdown(!showCountriesDropdown);
+    setShowGenderDropdown(false);
+  };
+
+  const onGenderListOpenTrigger = () => {
+    setShowGenderDropdown(!showGenderDropdown);
+    setShowCountriesDropdown(false);
+  };
+
+  return (
+    <Container
+      style={{ backgroundImage: `url('${Background}')`}}
+      onClick={onClickAway}>
+      <Overlay>
+
+        <LoginForm>
+          <Slogan>
+            <img src={Logo} alt=""/>
+            <span>Meet. Chat. Enjoy.</span>
+          </Slogan>
+          <div>
+            <h1>Welcome.</h1>
+            <div style={{ marginBottom: 20 }}>
+              <Dropdown
+                isOpen={showGenderDropdown}
+                options={GENDER_LIST}
+                value={gender}
+                onSelect={onGenderSelectHandler}
+                onClickHandler={onGenderListOpenTrigger}
+                placeholder={'Choose yor gender'} />
+            </div>
+
+            <div style={{ marginBottom: 20 }}>
+              <Dropdown
+                isOpen={showCountriesDropdown}
+                options={COUNTRIES_LIST}
+                value={country}
+                onClickHandler={onCountriesListTrigger}
+                onSelect={onCountriesSelectHandler}
+                placeholder={'Choose yor country'} />
+            </div>
+
+            <Button
+              onClick={redirectToChat}
+              disabled={!gender || !country}
+            >NEXT
+            </Button>
+          </div>
+        </LoginForm>
+      </Overlay>
+    </Container>
   )
 
 };

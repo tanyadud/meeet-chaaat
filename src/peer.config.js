@@ -1,7 +1,8 @@
 export default {
   host: process.env.REACT_APP_PEER_SERVER_URL,
-  secure: true,
-  path: '/api/peers',
+  secure: false,
+  port: 9000,
+  path: '/',
   config: {
     iceServers: [
       {
