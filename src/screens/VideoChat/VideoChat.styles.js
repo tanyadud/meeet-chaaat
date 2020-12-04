@@ -94,16 +94,8 @@ export const MessagesContainer = styled.div`
   margin: 50px 0px 30px;
 `;
 
-export const UserPreview = styled.div`
-  height: 100%;
-  display: flex;
-  padding: 15px;
-  align-items: center;
-  justify-content: center;
-`;
-
 export const Video = styled.video`
-  background: #F9F6F8;
+  background: #000000;
   object-fit: cover;
   width: 100%;
   height: 100%;

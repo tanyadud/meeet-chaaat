@@ -4,7 +4,6 @@ import io from 'socket.io-client';
 import {v4 as uuidv4} from 'uuid';
 import {connect} from 'react-redux';
 import peerConfig from '../../peer.config';
-import UserImg from '../../common/images/user.png';
 import Background from '../../common/images/elements.png';
 import ChatControls from '../../components/ChatControls';
 import ChatInput from '../../components/ChatInput';
@@ -16,7 +15,6 @@ import {
   Container,
   VideoContainer,
   ChatContainer,
-  UserPreview,
   Video,
   Chat,
   NoMessages,
@@ -51,7 +49,13 @@ class VideoChat extends React.Component {
   componentDidMount() {
     this.getUserMedia()
       .then(() => this.setPeerConnection())
-      .then(() => this.setSocketConnection());
+      .then(() => this.setSocketConnection())
+      .catch(cameraError => {
+        this.setState({
+          showError: true,
+          cameraError
+        });
+      })
   }
 
   setPeerConnection = () => {
@@ -66,6 +70,7 @@ class VideoChat extends React.Component {
   };
 
   setSocketConnection = () => {
+    console.log('setSocketConnection this.peer.id', this.peer.id);
     this.socket = io.connect(process.env.REACT_APP_SOCKET_IO_URL, {
       path: '/api/scoket',
       query: {
@@ -103,6 +108,7 @@ class VideoChat extends React.Component {
   };
 
   onSocketConnect = payload => {
+    console.log('onSocketConnect ===> ', payload);
     console.log('[SOCKET]: Connection success. ID:', payload);
   };
 
@@ -180,12 +186,9 @@ class VideoChat extends React.Component {
       const stream = await navigator.mediaDevices.getUserMedia({video: true, audio: true});
       this.localVideoRef.current.srcObject = stream;
       this.localVideoRef.current.muted = true;
-
-    } catch (cameraError) {
-      this.setState({
-        showError: true,
-        cameraError
-      });
+      return stream
+    } catch (error) {
+      throw new Error(error.message)
     }
   };
 
@@ -243,9 +246,9 @@ class VideoChat extends React.Component {
   };
 
   render() {
-    const { showError, cameraError, remotePeerID, stat, messages, textValue, showMobileChat, connError } = this.state;
+    const {showError, cameraError, remotePeerID, stat, messages, textValue, showMobileChat, connError} = this.state;
     return (
-      <Container style={{ backgroundImage: `url("${Background}")` }}>
+      <Container style={{backgroundImage: `url("${Background}")`}}>
 
         <Modal
           onClose={this.onModalClose}
@@ -254,19 +257,13 @@ class VideoChat extends React.Component {
 
         <VideoContainer>
 
-          {
-            cameraError ? (
-              <UserPreview>
-                <img style={{ width: '100%', maxWidth: 400 }} src={UserImg} alt=""/>
-              </UserPreview>
-            ) : (
-              <>
-                {remotePeerID && <Video ref={this.remoteVideoRef} autoPlay/>}
-                <Video ref={this.localVideoRef} autoPlay style={remotePeerID ? VIDEO_STYLES : null}/>
-              </>
-            )
-          }
-          <div style={{ position: 'absolute', bottom: 25, width: '100%' }}>
+
+          <>
+            {remotePeerID && <Video ref={this.remoteVideoRef} autoPlay/>}
+            <Video ref={this.localVideoRef} autoPlay style={remotePeerID ? VIDEO_STYLES : null}/>
+          </>
+
+          <div style={{position: 'absolute', bottom: 25, width: '100%'}}>
             <VideoControls
               onStopped={this.destroyPeer}
               isDisabled={Boolean(!this.peer || !this.socket || cameraError || !remotePeerID)}
@@ -278,38 +275,38 @@ class VideoChat extends React.Component {
         <ChatContainer>
           <div>
             <ChatControls
-              isDisabled={Boolean(connError || cameraError || remotePeerID)}
+              isDisabled={Boolean(!this.peer || !this.socket || connError || cameraError || remotePeerID)}
               stat={stat} onStart={this.findCandidate}/>
           </div>
 
           {
-              <ChatOverlay isVisible={showMobileChat}>
-                <Chat>
-                  <CloseButton onClick={() => this.toggleMobileChat(false)}>
-                    <span className="material-icons">close</span>
-                  </CloseButton>
-                  <MessagesContainer>
+            <ChatOverlay isVisible={showMobileChat}>
+              <Chat>
+                <CloseButton onClick={() => this.toggleMobileChat(false)}>
+                  <span className="material-icons">close</span>
+                </CloseButton>
+                <MessagesContainer>
 
-                    {!messages || !messages.length ? (
-                      <NoMessages>There is no messages yet</NoMessages>
-                    ) : (
-                      messages.map((msg) =>
-                        <Message key={uuidv4()} value={msg.text} isOwner={msg.id === this.peer.id}/>
-                      )
-                    )}
-                  </MessagesContainer>
+                  {!messages || !messages.length ? (
+                    <NoMessages>There is no messages yet</NoMessages>
+                  ) : (
+                    messages.map((msg) =>
+                      <Message key={uuidv4()} value={msg.text} isOwner={msg.id === this.peer.id}/>
+                    )
+                  )}
+                </MessagesContainer>
 
-                  <div>
-                    <ChatInput
-                      isSendDisabled={Boolean(!this.state.textValue.trim())}
-                      isInputDisabled={Boolean(!this.state.remotePeerID)}
-                      onText={this.handleTextInput}
-                      onSend={this.sendMessage}
-                      value={textValue}
-                      placeholder="Write your message" />
-                  </div>
-                </Chat>
-              </ChatOverlay>
+                <div>
+                  <ChatInput
+                    isSendDisabled={Boolean(!this.state.textValue.trim())}
+                    isInputDisabled={Boolean(!this.state.remotePeerID)}
+                    onText={this.handleTextInput}
+                    onSend={this.sendMessage}
+                    value={textValue}
+                    placeholder="Write your message"/>
+                </div>
+              </Chat>
+            </ChatOverlay>
           }
         </ChatContainer>
       </Container>

@@ -11,7 +11,7 @@ const ChatControls = ({ onStart, stat, isDisabled }) => {
         <StartButton
           disabled={isDisabled}
           onClick={onStart}>
-          START NEW TALK
+          START TALK
           <span className="material-icons">call</span>
         </StartButton>
       </Flex>
@@ -20,7 +20,7 @@ const ChatControls = ({ onStart, stat, isDisabled }) => {
         <Button disabled={isDisabled}>
           <span className="material-icons">settings</span>
         </Button>
-        <UsersCounter>
+        <UsersCounter isDisabled={isDisabled}>
           <span className="material-icons">people</span> { stat }
         </UsersCounter>
       </Flex>

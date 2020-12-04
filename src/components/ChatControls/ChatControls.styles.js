@@ -19,7 +19,7 @@ export const UsersCounter = styled.div`
     background: #FFFFFF;
     span {
       margin-right: 10px;
-      color: #820665;
+      color: ${props => !props.isDisabled ? '#820665' : 'rgba(157,148,160,.5)' };
     }
 `;
 
