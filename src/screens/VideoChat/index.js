@@ -72,7 +72,7 @@ class VideoChat extends React.Component {
   setSocketConnection = () => {
     console.log('setSocketConnection this.peer.id', this.peer.id);
     this.socket = io.connect(process.env.REACT_APP_SOCKET_IO_URL, {
-      path: '/api/scoket',
+      path: '/main',
       query: {
         peerID: this.peer.id,
         peerInfo: JSON.stringify(this.props.user),
@@ -183,7 +183,7 @@ class VideoChat extends React.Component {
 
   getUserMedia = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({video: true, audio: true});
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       this.localVideoRef.current.srcObject = stream;
       this.localVideoRef.current.muted = true;
       return stream
