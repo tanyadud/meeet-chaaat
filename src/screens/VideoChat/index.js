@@ -132,7 +132,7 @@ class VideoChat extends React.Component {
   };
 
   onSocketCallEnd = () => {
-    console.log('[SOCKET]: Receive end of call. Socket ID:', this.socket.id);
+    console.log('[SOCKET]: Receive end of call ===>', this.socket.id);
     this.remoteVideoRef.current.srcObject = null;
 
     this.setState({
