@@ -72,7 +72,7 @@ class VideoChat extends React.Component {
   setSocketConnection = () => {
     console.log('setSocketConnection this.peer.id', this.peer.id);
     this.socket = io.connect(process.env.REACT_APP_SOCKET_IO_URL, {
-      path: '/api/scoket',
+      path: '/api/socket',
       query: {
         peerID: this.peer.id,
         peerInfo: JSON.stringify(this.props.user),
