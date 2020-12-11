@@ -9,5 +9,5 @@ export const MessageText = styled.div`
   background: #820665;
   color: #fff;
   max-width: 75%;
-  border-radius: 10px;
+  border-radius: 5px;
 `;

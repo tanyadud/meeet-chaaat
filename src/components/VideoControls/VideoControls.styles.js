@@ -13,7 +13,7 @@ export const Button = styled.button`
    justify-content: center;
    padding: 0 15px;
    height: 50px;
-   border-radius: 10px;
+   border-radius: 5px;
    margin: 0 8px;
    background: rgba(246, 241, 248, .7);
     &:disabled {

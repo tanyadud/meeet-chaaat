@@ -3,17 +3,29 @@ import PropTypes from 'prop-types';
 import {Container} from './ChatControls.styles';
 import {Button, StartButton, UsersCounter, Flex} from './ChatControls.styles';
 
-const ChatControls = ({ onStart, stat, isDisabled }) => {
-  console.log('ChatControls', isDisabled );
+const ChatControls = ({ onStart, onReady, stat, isDisabled, isReady }) => {
   return (
     <Container>
       <Flex>
-        <StartButton
-          disabled={isDisabled}
-          onClick={onStart}>
-          START TALK
-          <span className="material-icons">call</span>
-        </StartButton>
+        {
+          isReady ?
+            (
+              <StartButton
+                disabled={isDisabled}
+                onClick={onStart}>
+                START TALK
+                <span className="material-icons">call</span>
+              </StartButton>
+            ) :
+            (
+              <StartButton
+                disabled={isDisabled}
+                onClick={onReady}>
+                I AM READY
+                <span className="material-icons"> done </span>
+              </StartButton>
+            )
+        }
       </Flex>
 
       <Flex>

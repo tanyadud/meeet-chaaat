@@ -4,7 +4,7 @@ export const Container = styled.div`
     position: relative;
     background-color: #F6F1F8;
     color: #9D94A0;
-    border-radius: 10px;
+    border-radius: 5px;
         font-size: 14px;
             color: #9D94A0;
 `;
@@ -14,7 +14,7 @@ export const InputText = styled.input`
     width: 100%;
     background-color: #F6F1F8;
     border: none;
-    border-radius: 10px;
+    border-radius: 5px;
     padding: 15px 35px 15px 15px;
     cursor: pointer;
     &::placeholder {
@@ -35,8 +35,8 @@ export const DropdownContainer = styled.div`
     width: 100%;
     z-index: 999;
     background-color: #F6F1F8;
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
 `;
 
 export const DropdownList = styled.div`

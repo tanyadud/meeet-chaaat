@@ -13,7 +13,7 @@ export const UsersCounter = styled.div`
     align-items: center;
     height: 50px;
     padding: 10px;
-    border-radius: 10px;
+    border-radius: 5px;
     margin-left: 10px;
     font-size: 14px;
     background: #FFFFFF;
@@ -29,7 +29,7 @@ export const Button = styled.button`
     height: 50px;
     justify-content: center;
     padding: 0 15px;
-    border-radius: 10px;
+    border-radius: 5px;
     background: #FFFFFF;
     color: #820665;
     &:disabled {

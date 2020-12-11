@@ -12,7 +12,7 @@ export const Input = styled.textarea`
     width: 100%;
     overflow-y: auto;
     border: none;
-    border-radius: 10px;
+    border-radius: 5px;
     resize: none;
     padding: 10px 40px 10px 15px;
     &:disabled {

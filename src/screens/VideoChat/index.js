@@ -34,13 +34,13 @@ class VideoChat extends React.Component {
     this.socket = null;
 
     this.state = {
+      isReady: false,
       stat: 0,
       messages: [],
       textValue: '',
       progress: false,
-      connError: null,
+      errorMsg: null,
       showError: false,
-      cameraError: null,
       remotePeerID: null,
       showMobileChat: false
     };
@@ -50,13 +50,17 @@ class VideoChat extends React.Component {
     this.getUserMedia()
       .then(() => this.setPeerConnection())
       .then(() => this.setSocketConnection())
-      .catch(cameraError => {
+      .catch(error => {
         this.setState({
           showError: true,
-          cameraError
-        });
+          errorMsg: 'Camera or microphone were not found'
+        })
       })
   }
+
+  activateUser = () => {
+    this.emitPeers('activate-user', this.peer.id);
+  };
 
   setPeerConnection = () => {
     return new Promise(resolve => {
@@ -88,12 +92,14 @@ class VideoChat extends React.Component {
     this.socket.on('connect_failed', this.onSocketConnError);
     this.socket.on('connection-success', this.onSocketConnect);
     this.socket.on('get-candidate', this.onSocketGetCandidate);
+    this.socket.on('activate-user', this.onSocketActivateUser);
   };
 
-  onPeerError = connError => {
-    console.error('[PEER]: Connection error:', connError);
+  onPeerError = (error) => {
+    console.error('[PEER]: Connection error:', error);
     this.setState({
-      connError
+      errorMsg: 'Connection error. Please try reload the page.',
+      showError: true
     });
   };
 
@@ -114,11 +120,12 @@ class VideoChat extends React.Component {
     console.log('[SOCKET]: Connection success. ID:', payload);
   };
 
-  onSocketConnError = connError => {
+  onSocketConnError = (error) => {
     this.setState({
-      connError
+      errorMsg: 'Connection error. Please try reload the page.',
+      showError: true
     });
-    console.error('[SOCKET]: Connection error:', connError);
+    console.error('[SOCKET]: Connection error:', error);
   };
 
   onSocketGetMessage = payload => {
@@ -152,6 +159,12 @@ class VideoChat extends React.Component {
 
   onSocketGetStat = stat => {
     this.setState({stat});
+  };
+
+  onSocketActivateUser = data => {
+    this.setState({
+      isReady: Boolean(data && data.success)
+    })
   };
 
   findCandidate = async () => {
@@ -248,11 +261,12 @@ class VideoChat extends React.Component {
   };
 
   render() {
-    const {showError, cameraError, remotePeerID, stat, messages, textValue, showMobileChat, connError} = this.state;
+    const {showError, remotePeerID, stat, messages, textValue, showMobileChat, errorMsg, isReady} = this.state;
     return (
       <Container style={{backgroundImage: `url("${Background}")`}}>
 
         <Modal
+          text={errorMsg}
           onClose={this.onModalClose}
           isOpen={showError}
         />
@@ -268,7 +282,7 @@ class VideoChat extends React.Component {
           <div style={{position: 'absolute', bottom: 25, width: '100%'}}>
             <VideoControls
               onStopped={this.destroyPeer}
-              isDisabled={Boolean(!this.peer || !this.socket || cameraError || !remotePeerID)}
+              isDisabled={Boolean(!this.peer || !this.socket || errorMsg || !remotePeerID)}
               onChatOpen={() => this.toggleMobileChat(true)}
             />
           </div>
@@ -277,8 +291,11 @@ class VideoChat extends React.Component {
         <ChatContainer>
           <div>
             <ChatControls
-              isDisabled={Boolean(!this.peer || !this.socket || connError || cameraError || remotePeerID)}
-              stat={stat} onStart={this.findCandidate}/>
+              isReady={true}
+              isDisabled={Boolean(errorMsg || remotePeerID)}
+              stat={stat}
+              onStart={this.findCandidate}
+              onReady={this.activateUser} />
           </div>
 
           {
