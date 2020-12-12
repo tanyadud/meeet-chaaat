@@ -1,10 +1,9 @@
-[
-  {
-    "relation": ["delegate_permission/common.handle_all_urls"],
-    "target": {
-      "namespace": "android_app",
-      "package_name": "com.chatty.app",
-      "sha256_cert_fingerprints":
-      ["AD:1A:0B:D5:8D:B0:C6:D1:6B:77:76:DB:41:33:FC:EE:3C:38:F0:75:73:58:1E:81:83:00:8B:0C:CE:06:EB:20"]
-    }
-  }]
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.iki.chatty.app",
+    "sha256_cert_fingerprints":
+    ["AD:1A:0B:D5:8D:B0:C6:D1:6B:77:76:DB:41:33:FC:EE:3C:38:F0:75:73:58:1E:81:83:00:8B:0C:CE:06:EB:20"]
+  }
+}]
