@@ -5,13 +5,18 @@ import App from './App';
 import { Provider } from 'react-redux';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
-import store from "./store";
+// import store from "./store";
+import { ConnectedRouter } from 'connected-react-router';
+import store, { history } from './store'
+// const store = configureStore()
 
 ReactDOM.render(
   <Provider store={store}>
-    <StrictMode>
-      <App />
-    </StrictMode>
+    <ConnectedRouter history={history}>
+      <StrictMode>
+          <App />
+      </StrictMode>
+    </ConnectedRouter>
   </Provider>,
   document.getElementById('root')
 );

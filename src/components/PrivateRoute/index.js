@@ -3,16 +3,17 @@ import { Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 const PrivateRoute = ({ children, user, ...rest }) => {
+  const tempUser = true;
   return (
     <Route
       {...rest}
       render={({ location }) =>
-        user ? (
+        tempUser ? (
           children
         ) : (
           <Redirect
             to={{
-              pathname: '/login',
+              pathname: '/sign-in',
               state: { from: location },
             }}
           />

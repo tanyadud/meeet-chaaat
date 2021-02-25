@@ -1,28 +1,15 @@
-import { createStore } from 'redux';
-import rootReducers from '../reducers';
+import { createStore, applyMiddleware, compose } from 'redux';
+import { createBrowserHistory } from 'history'
+import thunk from 'redux-thunk';
+// import rootReducers from '../reducers';
+import createRootReducer from '../reducers'
+export const history = createBrowserHistory()
 
-function saveUser(state) {
-  try {
-    const serialisedState = JSON.stringify(state);
-    localStorage.setItem('localUser', serialisedState);
-  } catch (e) {
-    console.error(e);
-  }
-}
+const store = createStore(
+  createRootReducer(history),
+  applyMiddleware(thunk)
+);
 
-function getLocalUser() {
-  try {
-    const serialisedState = localStorage.getItem('localUser');
-    if (serialisedState === null) return undefined;
-    return JSON.parse(serialisedState);
-  } catch (e) {
-    console.error(e);
-    return undefined;
-  }
-}
 
-const store = createStore(rootReducers, getLocalUser());
-
-store.subscribe(() => saveUser(store.getState()));
 
 export default store;

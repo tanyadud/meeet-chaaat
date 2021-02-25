@@ -273,7 +273,6 @@ class VideoChat extends React.Component {
 
         <VideoContainer>
 
-
           <>
             {remotePeerID && <Video ref={this.remoteVideoRef} autoPlay/>}
             <Video ref={this.localVideoRef} autoPlay style={remotePeerID ? VIDEO_STYLES : null}/>
